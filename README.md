@@ -1,4 +1,6 @@
-### Spatiotemporal Molecular Characterization of Cold Ischemia Kidney Injury
+### Spatiotemporal Transcriptomic Analysis of the Murine Kidney Reveals Compartment-Specific Changes During Cold Ischemic Injury
 
-This repository contains all the codes taht were used for the compatuational analysis and
+This repository contains all the codes that were used for the compatuational analysis and
 generation of all the figures presented in the article.
+
+The data necessary to run the codes can be found at zenodo ID: xxxx
