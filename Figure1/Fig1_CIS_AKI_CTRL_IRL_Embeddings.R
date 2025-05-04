@@ -2,9 +2,10 @@
 rm(list=ls(all.names=TRUE))
 gc()
 
+#Set your working directory accordingly 
 setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHopkins/Jean Fan - 2024_spatial_AKI/Manuscript")
 
-## load data
+## load datasets (located in data folder)
 load("data/AKI_data.RData")
 load("data/CIS_data.RData")
 load("data/Rabb_ctrl.RData")
