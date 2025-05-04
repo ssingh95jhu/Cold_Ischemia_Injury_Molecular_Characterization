@@ -28,7 +28,8 @@ AKI_12h$gexp<-AKI_12h$gexp[-grep("^mt", rownames(AKI_12h$gexp)),]
 AKI_2d$gexp<-AKI_2d$gexp[-grep("^mt", rownames(AKI_2d$gexp)),]
 AKI_6w$gexp<-AKI_6w$gexp[-grep("^mt", rownames(AKI_6w$gexp)),]
 
-##Removing all mitochondrial genes from the gene experssion table (irl dataset)
+##Removing all mitochondrial genes from the gene experssion table (IRL dataset)
+# Note IRI dataset is the same as AKI24 dataset in the main article section.
 irl1$gexp<-irl1$gexp[-grep("^mt", rownames(irl1$gexp)),]
 irl2$gexp<-irl2$gexp[-grep("^mt", rownames(irl2$gexp)),]
 irl3$gexp<-irl3$gexp[-grep("^mt", rownames(irl3$gexp)),]
