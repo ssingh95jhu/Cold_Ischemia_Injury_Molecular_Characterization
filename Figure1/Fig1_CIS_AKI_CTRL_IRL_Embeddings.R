@@ -174,7 +174,7 @@ ggplot(Hemb, aes(x=tsne1,y=tsne2, col=tissue)) + geom_point(size=0.3) +
   ) + guides(color = guide_legend(override.aes = list(size = 2)))
 dev.off()
 
-####Figure 1: Section 3~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## This section is used to generate images in section E of Figure1.
 
 my_theme <- theme_bw() + 
   theme(axis.title.x=element_blank(),
@@ -190,7 +190,7 @@ my_theme <- theme_bw() +
         legend.position="none"
   )
 
-#CIS Tissue
+#CIS Tissue (Cold Ischemia Injury):
 CIS_0h.df<-data.frame(CIS_0h$pos)
 CIS_0h.df$Compartment<-'Other'
 CIS_0h.df$Compartment<-Hemb[rownames(CIS_0h.df),]$tissue
@@ -227,7 +227,7 @@ grid.arrange(g1,g2, g3, g4, ncol=4)
 dev.off()
 
 
-#AKI Tissue
+#AKI Tissue (Warm Ischmia-Reperfusion Injury):
 AKI_sham.df<-data.frame(AKI_sham$pos)
 AKI_sham.df$Compartment<-'Other'
 AKI_sham.df$Compartment<-Hemb[rownames(AKI_sham.df),]$tissue
@@ -267,7 +267,11 @@ pdf("Figures/Figure1/pdfs/AKI_Compartment_Annotations_ggplot.pdf", height=3, wid
 grid.arrange(g1,g2, g3, g4, ncol=4)
 dev.off()
 
-#CTRL Tissue:
+
+#Similar to CIS and AKI tissue, the different compartments can be visulaized in the
+#CTRL and the IRL tissue as well (Section M and N of Supplementary Figure1)
+
+#CTRL Tissue (Native kidney tissues):
 CTRL1.df<-data.frame(ctrl1$pos)
 CTRL1.df$Compartment<-'Other'
 CTRL1.df$Compartment<-Hemb[rownames(CTRL1.df),]$tissue
@@ -307,7 +311,8 @@ pdf("Figures/Figure1/pdfs/CTRL_Compartment_Annotations_ggplot.pdf", height=3, wi
 grid.arrange(g1,g2, g3, g4, ncol=4)
 dev.off()
 
-##IRL Tissue:
+##IRL Tissue (24 hours warm ischemia-reperfusion injury in male mice):
+## Note: IRL is same as AKI24 dataset in the main article section.
 IRL1.df<-data.frame(irl1$pos)
 IRL1.df$Compartment<-'Other'
 IRL1.df$Compartment<-Hemb[rownames(IRL1.df),]$tissue
