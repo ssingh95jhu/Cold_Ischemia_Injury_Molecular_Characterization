@@ -1,6 +1,6 @@
-### Spatiotemporal Transcriptomic Analysis of the Murine Kidney Reveals Compartment-Specific Changes During Cold Ischemic Injury
+### Contents of folder Figure1
 
-This repository contains all the codes that were used for the compatuational analysis and
-generation of all the figures presented in the article.
+This folder contains the codes to generate images used in sections B-E of
+Figure1 of the main article section.
 
 The data necessary to run the codes can be found at zenodo ID: xxxx
