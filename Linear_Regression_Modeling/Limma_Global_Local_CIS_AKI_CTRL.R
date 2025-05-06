@@ -6,8 +6,10 @@ setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHop
 
 ## load data
 load("data/CIS_data.RData")
-load("data/AKI_data.RData")
-load("data/Rabb_ctrl.RData")
+load("data/AKI_data.RData") 
+#For AKI Dataset, refer to the following article:
+# J Am Soc Nephrol., 2022 Feb;33(2):279-289.  doi: 10.1681/ASN.2021081150.
+# PMID: 34853151
 
 ########################## ADDING LIBRARY ######################################
 library(openxlsx)
@@ -245,11 +247,11 @@ AKI_6w$mat_notlog <- MERINGUE::normalizeCounts(AKI_6w$gexp[unique(rownames(CIS_0
 
 
 
-############### LINEAR REGRESSION ANALYSIS #####################################
+######### LINEAR REGRESSION IN A COMPARTMENT-AGNOSTIC MANNER ###################
 ######################### GLOBAL DEG (CIS) #####################################
 #Global refers to the whole tissue section without any compartmentalization.
 #In the main article section, 
-#TIME ENCODED AS LOG (HOURS + 1)
+
 library(limma)
 
 wb1<-createWorkbook() #workbook for DEG genelist (CIS 0 - 48hrs)
@@ -460,7 +462,7 @@ addWorksheet(wb4,"CIS_Global")
 writeData(wb4, "CIS_Global", CIS_Global.modKEGG)
 
 
-######### LINEAR REGRESSION IN A COMPARTMENT SPECIFIC MANNER ###################
+######### LINEAR REGRESSION IN A COMPARTMENT-SPECIFIC MANNER ###################
 #### CIS CORTEX  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## subset to just cortex (CIS)
 
@@ -1027,7 +1029,8 @@ saveWorkbook(wb4, "Supplementary_Tables/Limma_cpmCIS_GSEA_KEGG_Pathways.xlsx", o
 
 
 ################################################################################
-#### LINEAR REGRESSION ANALYSIS FOR WARM ISCHMEMIA-REPERFUSION (AKI) DATASET#### 
+#### LINEAR REGRESSION ANALYSIS FOR WARM ISCHMEMIA-REPERFUSION (AKI) DATASET####
+## GLOBAL ANALYSIS (COMPARTMENT-AGNOSTIC MANNER)
 
 wb5<-createWorkbook() #workbook for DEG genelist (AKI sham - 2weeks)
 wb6<-createWorkbook() #workbook for gsea GO pathway (AKI sham - 2weeks)
@@ -1237,8 +1240,8 @@ head(AKI_Global.modKEGG$core_enrichment)
 addWorksheet(wb8,"AKI_Global")
 writeData(wb8, "AKI_Global", AKI_Global.modKEGG)
 
-
-#### AKI CORTEX (Limma) ********************************************************
+##### LINEAR REGRESION ANALYSIS IN A COMPARTMENT-SPECIFIC MANNER ###############
+#### AKI CORTEX ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## subset to just cortex (AKI)
 
 #Selecting 190 random points from the whole AKI cortex cross section
@@ -1422,8 +1425,9 @@ head(AKI_Cortex.modKEGG$core_enrichment)
 addWorksheet(wb8,"AKI_Cortex")
 writeData(wb8, "AKI_Cortex", AKI_Cortex.modKEGG)
 
-#### AKI INTERFACE (Limma) ********************************************************
+#### AKI INTERFACE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## subset to just interface (AKI)
+#Note: Interface is same as Outer medulla.
 
 #Selecting 190 random points from the whole AKI interface cross section
 set.seed(700)
@@ -1606,8 +1610,9 @@ head(AKI_Interface.modKEGG$core_enrichment)
 addWorksheet(wb8,"AKI_Interface")
 writeData(wb8, "AKI_Interface", AKI_Interface.modKEGG)
 
-#### AKI MEDULLA (Limma) ********************************************************
-## subset to just interface (AKI)
+#### AKI MEDULLA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## subset to just medulla (AKI)
+#Note: medulla is same as Inner Medulla
 
 #Selecting 190 random points from the whole AKI medulla cross section
 set.seed(800)
