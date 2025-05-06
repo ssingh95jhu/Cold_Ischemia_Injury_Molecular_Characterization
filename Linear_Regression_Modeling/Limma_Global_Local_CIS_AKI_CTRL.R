@@ -241,11 +241,12 @@ AKI_6w$mat_notlog <- MERINGUE::normalizeCounts(AKI_6w$gexp[unique(rownames(CIS_0
 # gene_sets<-msigdbr(species = "mouse", category = "H")
 # background <- gene_sets[, c("gs_name", "gene_symbol")]
 
-################################################################################
-################# USING CPM ONLY INSTEAD OF log(CPM) ############################
 
-######################### LIMMA ANALYSIS #######################################
+
+############### LINEAR REGRESSION ANALYSIS #####################################
 ######################### GLOBAL DEG (CIS) #####################################
+#Global refers to the whole tissue section without any compartmentalization.
+#In the main article section, 
 #TIME ENCODED AS LOG (HOURS + 1)
 library(limma)
 
@@ -457,17 +458,12 @@ addWorksheet(wb4,"CIS_Global")
 writeData(wb4, "CIS_Global", CIS_Global.modKEGG)
 
 
-# pathview(
-#   gene.data = CIS_Global.KEGG,  # Your ranked gene list (Entrez IDs)
-#   pathway.id = "mmu04140",  #<-Autophagy,#"mmu00190" <-Oxidative Phosphorylation,   # The KEGG pathway ID you want to visualize
-#   species = "mmu"            # "hsa" for human
-# )
-
-######################### COMPARTMENT DEG (CIS CPM counts) #####################
-#### CIS CORTEX (Limma) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+######### LINEAR REGRESSION IN A COMPARTMENT SPECIFIC MANNER ###################
+#### CIS CORTEX  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## subset to just cortex (CIS)
 
 #Selecting 190 random points from the whole CIS cortex cross section
+#This is done to avoid over-representation of the cortical area.
 set.seed(200)
 cis_rand_spots.cortex.0h<-sample(rownames(CIS_cortex.0h), sample_n, replace=FALSE)
 cis_rand_spots.cortex.12h<-sample(rownames(CIS_cortex.12h), sample_n, replace=FALSE)
@@ -648,8 +644,8 @@ head(CIS_Cortex.modKEGG$core_enrichment)
 addWorksheet(wb4,"CIS_Cortex")
 writeData(wb4, "CIS_Cortex", CIS_Cortex.modKEGG)
 
-### ****************************************************************************
-### subset to just interface (CIS) 
+### CIS INTERFACE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##Note: INTERFACE is same as Outer Medulla.
 
 #Selecting 190 random points from the whole CIS interface cross section
 set.seed(300)
@@ -838,8 +834,8 @@ addWorksheet(wb4,"CIS_Interface")
 writeData(wb4, "CIS_Interface", CIS_Interface.modKEGG)
 
 
-#### CIS MEDULLA (Limma) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## subset to just medulla (CIS)
+#### CIS MEDULLA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Note: MEDULLA is same as Inner Medulla.
 
 #Selecting 190 random points from the whole CIS medulla cross section
 set.seed(400)
@@ -1027,9 +1023,9 @@ saveWorkbook(wb2, "Supplementary_Tables/Limma_cpmCIS_GSEA_GO_ALL_Pathways.xlsx",
 saveWorkbook(wb3, "Supplementary_Tables/Limma_cpmCIS_GSEA_Hallmark_Pathways.xlsx", overwrite = TRUE)
 saveWorkbook(wb4, "Supplementary_Tables/Limma_cpmCIS_GSEA_KEGG_Pathways.xlsx", overwrite = TRUE)
 
-######################### LIMMA ANALYSIS #######################################
-######################### GLOBAL DEG (AKI till 2 DAYS) #########################
-#TIME ENCODED AS LOG (HOURS + 1)
+
+################################################################################
+#### LINEAR REGRESSION ANALYSIS FOR WARM ISCHMEMIA-REPERFUSION (AKI) DATASET#### 
 
 wb5<-createWorkbook() #workbook for DEG genelist (AKI sham - 2weeks)
 wb6<-createWorkbook() #workbook for gsea GO pathway (AKI sham - 2weeks)
