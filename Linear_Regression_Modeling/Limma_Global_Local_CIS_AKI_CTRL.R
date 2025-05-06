@@ -22,6 +22,8 @@ library(biomaRt)
 
 ##############################################################################
 #Extracting the compartment specific spots for CIS and AKI:
+#Note: 1.Interface is same as Outer Medulla. 
+# 2. Medulla is same as Inner Medulla.
 
 cortex <- readRDS('AKI-CIS-irl-ctrl_Cortex_spots.rds')
 interface <- readRDS('AKI-CIS-irl-ctrl_Interface_spots.rds')
