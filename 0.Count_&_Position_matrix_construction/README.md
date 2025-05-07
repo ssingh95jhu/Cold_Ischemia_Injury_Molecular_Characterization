@@ -1,10 +1,7 @@
-This folder contains the code demonstrating how to plot and visualize the spatiotemporal gene expression pattern 
-of any gene of interest within any of the following experimental groups:
+This folder contains the code demonstrating how to construct the count matrix (feature-barcode matrix) 
+and the corresponding psoition matrices for the cold ischemia injury (CIS) dataset at 0, 12, 24 and 48 hours, 
+using the files provided on Zenodo. (Refer to the main article section for Zenodo ID).
 
- 1. Cold Ischemia Injury (CIS)
- 2. Warm Ischemia-Reperfusion Injury (AKI) (female mice)
- 3. Native kidneys (CTRL)
- 4. 24-hours Warm Ischemia-Reperfusion Injury (AKI24) (male mice)
 
 
 
