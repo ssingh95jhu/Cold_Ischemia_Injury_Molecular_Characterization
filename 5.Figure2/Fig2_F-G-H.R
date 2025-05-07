@@ -11,7 +11,7 @@ library(ggrepel)
 library(dplyr)
 
 ################################################################################
-#### Extracting data from the stored tables:
+#### Extracting linear regression results from the stored tables:
 ## DEGS DETECTED IN DIFFERENT COMPARTMENTS OF THE KIDNEY
 cis_cortex_degs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Cortex")
 rownames(cis_cortex_degs)<-cis_cortex_degs$Genes
@@ -34,10 +34,6 @@ comm_genes<-intersect(rownames(cis_cortex_degs), rownames(cis_interface_degs) )
 df<-data.frame(CIS_CORTEX_DEGS=cis_cortex_degs[comm_genes,]$Slope, CIS_INTERFACE_DEGS=cis_interface_degs[comm_genes,]$Slope)
 df$gene <- comm_genes
 head(df)
-
-# df$quadrant <- ifelse((df$CIS_CORTEX_DEGS > 0 & df$CIS_INTERFACE_DEGS > 0) | 
-#                         (df$CIS_CORTEX_DEGS < 0 & df$CIS_INTERAFACE_DEGS < 0), 
-#                       "green", "darkviolet")
 
 
 df$quadrant <- "green"

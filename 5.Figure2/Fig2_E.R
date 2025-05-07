@@ -18,6 +18,7 @@ library(dplyr)
 library(viridis) #color blind friendly
 library(RColorBrewer) #for RColorbrewer
 
+#Retrieving genes with significant temporal changes (from linear regression analysis)
 CIS_Cor_Udegs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Cortex_Up")
 CIS_Cor_Ddegs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Cortex_Down")
 
@@ -27,72 +28,7 @@ CIS_Int_Ddegs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet 
 CIS_Med_Udegs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Medulla_Up")
 CIS_Med_Ddegs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Medulla_Down")
 
-## Plot type1
-data <- data.frame(
-  value = c(CIS_Cor_Udegs$Slope, CIS_Int_Udegs$Slope, CIS_Med_Udegs$Slope,
-            CIS_Cor_Ddegs$Slope, CIS_Int_Ddegs$Slope, CIS_Med_Ddegs$Slope),
-  
-  group = factor(c(rep("CIS_UCor", nrow(CIS_Cor_Udegs)), 
-                   rep("CIS_UInt",  nrow(CIS_Int_Udegs)),
-                   rep("CIS_UMed",  nrow(CIS_Med_Udegs)),
-                   rep("CIS_DCor",  nrow(CIS_Cor_Ddegs)), 
-                   rep("CIS_DInt",  nrow(CIS_Int_Ddegs)),
-                   rep("CIS_DMed",  nrow(CIS_Med_Ddegs))  ))
-          )
-                   
-data <- data.frame(
-  value = c(CIS_Cor_Udegs$Slope, CIS_Int_Udegs$Slope, CIS_Med_Udegs$Slope),
-  
-  group = factor(c(rep("CIS_UCor", nrow(CIS_Cor_Udegs)), 
-                   rep("CIS_UInt",  nrow(CIS_Int_Udegs)),
-                   rep("CIS_UMed",  nrow(CIS_Med_Udegs))  ))
-)
-head(data)                    
-
-# # Load ggplot2
-library(ggplot2)
-
-# Plot the violin plot
-ggplot(data, aes(x = group, y = log10(value), fill = group)) +
-  geom_violin(trim = TRUE, alpha = 0.7, width=1) + 
-  geom_boxplot(width=0.05) +
-  # Violin plot with transparency
-  #geom_boxplot(width = 0.1, outlier.shape = TRUE, alpha = 0.9, color = "black") +    # Boxplot with black outline
-  
-  theme_minimal() +          # Use a clean theme
-  labs(x = "Group", y = "log (CPM/log (hours))", title= "CIS Slope Distribution") +
-  scale_fill_brewer(palette = "Set3") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold")) +# Optional color palette
-  theme(legend.position = "none")
-
-#Genes with downward trends:
-data <- data.frame(
-  value = c(CIS_Cor_Ddegs$Slope, CIS_Int_Ddegs$Slope, CIS_Med_Ddegs$Slope),
-  
-  group = factor(c(rep("CIS_DCor", nrow(CIS_Cor_Ddegs)), 
-                   rep("CIS_DInt",  nrow(CIS_Int_Ddegs)),
-                   rep("CIS_DMed",  nrow(CIS_Med_Ddegs))  ))
-)
-head(data)                    
-
-# # Load ggplot2
-library(ggplot2)
-
-# Plot the violin plot
-ggplot(data, aes(x = group, y = log10(abs(value)), fill = group)) +
-  geom_violin(trim = TRUE, alpha = 0.7, width=1) + 
-  geom_boxplot(width=0.05) +
-  # Violin plot with transparency
-  #geom_boxplot(width = 0.1, outlier.shape = TRUE, alpha = 0.9, color = "black") +    # Boxplot with black outline
-  
-  theme_minimal() +          # Use a clean theme
-  labs(x = "Group", y = "log (CPM/log (hours))", title= "CIS Slope Distribution") +
-  scale_fill_brewer(palette = "Set3") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold")) +# Optional color palette
-  theme(legend.position = "none")
-
-##xx****************************************************************************
-##Plot t
+##### PLOTTING DISTRIBUTION OF LINEAR FEGRESSION SLOPES ########################
 CIS_UAll<-rbind(CIS_Cor_Udegs, CIS_Int_Udegs, CIS_Med_Udegs)
 
 CIS_DAll<-rbind(CIS_Cor_Ddegs, CIS_Int_Ddegs, CIS_Med_Ddegs)
@@ -122,13 +58,8 @@ data <- data.frame(
 data$group<-factor(data$group, levels=c("CIS_UCor", "CIS_UInt",  "CIS_UMed",
                                         "CIS_DCor", "CIS_DInt",  "CIS_DMed"))
 
-head(data)                    
-
-# # Load ggplot2
-library(ggplot2)
-
 # Plot the violin plot
-pdf("Figures/Figure2/pdfs/CIS_Slopes_Distribution.pdf", height=4, width=15)
+#pdf("Figures/Figure2/pdfs/CIS_Slopes_Distribution.pdf", height=4, width=15)
 ggplot(data, aes(x = group, y = value, fill = group)) +
   geom_violin(trim = TRUE, alpha = 0.7, width=1) + 
   geom_boxplot(width=0.05) +
@@ -149,5 +80,5 @@ ggplot(data, aes(x = group, y = value, fill = group)) +
         axis.ticks = element_line(color = "black"), 
         axis.ticks.length = unit(0.1, "cm")) +
   theme(legend.position = "none")# Optional color palette
-  dev.off()
+ # dev.off()
 
