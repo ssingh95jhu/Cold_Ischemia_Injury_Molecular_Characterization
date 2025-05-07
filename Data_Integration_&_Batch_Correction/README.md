@@ -15,7 +15,7 @@ Dixon+, J Am Soc Nephrol., 2022 Feb;33(2):279-289.  doi: 10.1681/ASN.2021081150 
 3. CTRL and IRL datasets were obtained upon request from authors of the following article:
 Gharaie+, Sci Rep., 2023 Nov 28;13(1):20888.  doi: 10.1038/s41598-023-48213-2 (PMID: 38017015)
 
-===========================================================================================================================================================
+===============================================================================================
 
 The code makes use of Harmony package to remove batch effects among the ST datasets and perform subsequent clustering which facilitates idenitification
 of shared compartments compartments across all the 17 ST datasets namely: inner medulla, outer medulla and cortex.
