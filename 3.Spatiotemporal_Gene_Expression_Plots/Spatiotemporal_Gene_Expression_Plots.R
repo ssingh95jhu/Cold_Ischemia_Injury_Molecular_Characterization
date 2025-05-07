@@ -70,7 +70,7 @@ AKI_2d$mat_notlog <- MERINGUE::normalizeCounts(AKI_2d$gexp[unique(rownames(CIS_0
 AKI_6w$mat_notlog <- MERINGUE::normalizeCounts(AKI_6w$gexp[unique(rownames(CIS_0h$gexp)),], log=FALSE)
 
 ##############################################################################
-#Extracting the compartment specific spots for CIS and AKI:
+#Extracting the compartment specific spots for all the datasets:
 
 cortex <- readRDS('AKI-CIS-irl-ctrl_Cortex_spots.rds')
 interface <- readRDS('AKI-CIS-irl-ctrl_Interface_spots.rds')
