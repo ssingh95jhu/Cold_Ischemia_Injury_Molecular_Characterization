@@ -5,21 +5,30 @@ gc()
 #Set the working directory
 setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHopkins/Jean Fan - 2024_spatial_AKI/Manuscript")
 
-## load data
-load("data/AKI_data.RData")
+## Loading all the 17 spatial transcriptomics datasets 
 load("data/CIS_data.RData")
+load("data/AKI_data.RData")
 load("data/Rabb_ctrl.RData")
 load("data/Rabb_irl24h.RData")
+
+#Note: 
+#1. IRL is same as AKI24 dataset.
+#2. For AKI Dataset, refer to the following article:
+# Dixon+, J Am Soc Nephrol., 2022 Feb;33(2):279-289.  doi: 10.1681/ASN.2021081150 (PMID: 34853151)
+
+#3. CTRL and IRL datasets were obtained upon request from authors of the following article:
+#Gharaie+, Sci Rep., 2023 Nov 28;13(1):20888.  doi: 10.1038/s41598-023-48213-2 (PMID: 38017015)
+
 
 #Loading the required library
 library(STdeconvolve) #For finding out overdispersed genes
 library(harmony) #For implementing harmony to correct for batch effects
-library(MUDAN) #To normalize variance?
-#library(monocle3) #For trajectory analysis
-
+library(MUDAN) #To normalize variance
 
 ################################################################################
 ################# COMBINED CIS,AKI, CTRL AND IRL DATASET SEGMENTATION ##########
+
+#CIS dataset doesn't have any mitochondrial genes
 
 ##Removing all mitochondrial genes from the gene experssion table (AKI dataset)
 AKI_sham$gexp<-AKI_sham$gexp[-grep("^mt", rownames(AKI_sham$gexp)),]
@@ -28,19 +37,19 @@ AKI_12h$gexp<-AKI_12h$gexp[-grep("^mt", rownames(AKI_12h$gexp)),]
 AKI_2d$gexp<-AKI_2d$gexp[-grep("^mt", rownames(AKI_2d$gexp)),]
 AKI_6w$gexp<-AKI_6w$gexp[-grep("^mt", rownames(AKI_6w$gexp)),]
 
-##Removing all mitochondrial genes from the gene experssion table (irl dataset)
+##Removing all mitochondrial genes from the gene experssion table (IRL dataset)
+#Note: IRL is same as AKI24 dataset
 irl1$gexp<-irl1$gexp[-grep("^mt", rownames(irl1$gexp)),]
 irl2$gexp<-irl2$gexp[-grep("^mt", rownames(irl2$gexp)),]
 irl3$gexp<-irl3$gexp[-grep("^mt", rownames(irl3$gexp)),]
 irl4$gexp<-irl4$gexp[-grep("^mt", rownames(irl4$gexp)),]
 
-##Removing all mitochondrial genes from the gene experssion table (ctrl dataset)
+##Removing all mitochondrial genes from the gene experssion table (CTRL dataset)
 ctrl1$gexp<-ctrl1$gexp[-grep("^mt", rownames(ctrl1$gexp)),]
 ctrl2$gexp<-ctrl2$gexp[-grep("^mt", rownames(ctrl2$gexp)),]
 ctrl3$gexp<-ctrl3$gexp[-grep("^mt", rownames(ctrl3$gexp)),]
 ctrl4$gexp<-ctrl4$gexp[-grep("^mt", rownames(ctrl4$gexp)),]
 
-#CIS dataset doesn't have any mitochondrial genes
 
 ################################################################################
 
@@ -141,7 +150,7 @@ data<-c(rownames(corpus_CIS0h),rownames(corpus_CIS12h),
         rownames(corpus_ctrl1),rownames(corpus_ctrl2), 
         rownames(corpus_ctrl3),rownames(corpus_ctrl4) )
 
-#COD<-data[which(table(data)>=2)] <- not the desired set of gene names
+#Feature selecting genes
 COD<-unique(names(which(table(data)>=2)))
 COD<-intersect(COD,rownames(CIS_0h$gexp))
 #saveRDS(COD, file= "OverDispersed_Feautures_for_PC.rds")
@@ -152,7 +161,8 @@ addWorksheet(wb1,"Overdispersed_genes")
 writeData(wb1, "Overdispersed_genes",COD)
 saveWorkbook(wb1,"CIS_AKI_CTRL_IRL_Top_Feature_Selected_Genes.xlsx")
 
-## Impelementing HARMONY
+######### BATCH EFFECT CORRECTION ##############################################
+## Implementing HARMONY
 #Getting the data
 dataA<-CIS_0h$gexp[COD,]
 dataB<-CIS_12h$gexp[COD,]
@@ -184,7 +194,7 @@ cd<-as.matrix(cd)
 #cd<-cd[,-c(19931,20077)]
 cd<-cd[,-c(19931,20077)] #These two spots have no gene expression in them.
 
-# meta data 
+# meta data with appropriate labels for Harmony implementation
 meta <- c( rep('CIS 0h', ncol(dataA)), rep('CIS 12h', ncol(dataB)), 
            rep('CIS_24h', ncol(dataC)), rep('CIS_48h', ncol(dataD)), 
            rep('AKI_sham', ncol(dataE)), rep('AKI_4h', ncol(dataF)), rep('AKI_12h', ncol(dataG)),
@@ -199,32 +209,24 @@ names(meta) <- c(colnames(dataA), colnames(dataB), colnames(dataC), colnames(dat
                  colnames(dataE), colnames(dataF), colnames(dataG), colnames(dataH), colnames(dataI),
                  colnames(dataJ), colnames(dataK), colnames(dataL), colnames(dataM),
                  colnames(dataN), colnames(dataO), colnames(dataP), colnames(dataQ))
-meta<-meta[-c(19931,20077)]
 
+meta<-meta[-c(19931,20077)] #these spots have no gene expression
 meta <- factor(meta)
 
 
-#mat <- MERINGUE::cleanCounts(cd)
-#dim(mat)
-#dim(cd)
-## CPM normalization (is it the same as in MUDAN?)
+## CPM normalization 
 matnorm <- MERINGUE::normalizeCounts(cd, verbose=FALSE) 
-table(is.na(as.vector(matnorm)))
+#table(is.na(as.vector(matnorm)))
 
+#Principal Component Analysis
 pcs <- MUDAN::getPcs(matnorm,
                      nGenes=length(matnorm), 
                      nPcs=30,
                      verbose=FALSE) 
-#write.csv(pcs,file= "AKI-CIS-irl-ctrl_pcs.csv")
+
 saveRDS(pcs, file = "AKI-CIS-irl-ctrl_pcs.rds")
 
-#pcs<-prcomp(na.omit(matnorm), scale=F)
-
-
-#UMAP Plotting of regular (non-harmonized) clusters
-#emb <- uwot::umap(pcs) ## 2d embedding
-#rownames(emb) <- colnames(matnorm)
-
+#Visualizing the datasets in a low dimensional space (before batch effect correct)
 emb<- Rtsne::Rtsne(pcs)
 emb <- emb$Y
 rownames(emb) <- colnames(matnorm)
@@ -242,18 +244,17 @@ plotEmbedding(emb, groups=meta,
 dev.off()
 
 
-# Now harmonize PCs
+#Harmony Implementation for batch effect correction (on the PCs)
 harmonized <- HarmonyMatrix(pcs, meta, do_pca = FALSE, verbose = FALSE,
                             theta = 10, lambda = 0.05)
 saveRDS(harmonized, file = "AKI-CIS-irl-ctrl_Harmonized_Matrix.rds")
 
+#Visualizing the datasets after batch effect correction
 emb.harmony <- Rtsne::Rtsne(harmonized)
 emb.harmony <- emb.harmony$Y
 rownames(emb.harmony) <- colnames(matnorm)
 head(emb.harmony) 
 
-
-#write.csv(emb.harmony,file= "AKI-CIS-irl-ctrl_Harmonized_tSNE_Embeds.csv")
 saveRDS(emb.harmony, file = "AKI-CIS-irl-ctrl_Harmonized_tSNE_Embeds.rds")
 
 pdf('Harmonized_AKI-CIS-IRL-CTRL_datasets.pdf', height=5, width=5)
@@ -265,147 +266,14 @@ plotEmbedding(emb.harmony, groups=meta,
               shuffle.colors = FALSE, cex=0.3, alpha=1)
 dev.off()
 
-# Joint clustering
-#com <- getComMembership(harmonized, k=100, method=igraph::cluster_walktrap)
-#com <- getComMembership(harmonized, k=100, method=igraph::louvain)
+# clustering for identifacation of shared compartments across all ST datasets
 com <- getApproxComMembership(harmonized, k=100, method=igraph::cluster_louvain)
 
 #Saving the file
-#write.csv(com, file= "AKI-CIS-irl-ctrl_Harmonized_AllClusters.csv")
 saveRDS(com, file = "AKI-CIS-irl-ctrl_Harmonized_AllClusters.rds")
 
-##################################################################
-# com<-read.csv(file= "AKI-CIS-irl-ctrl_Harmonized_AllClusters.csv")
-# rownames(com)<-com$X
-# com$X<-com$x
-# head(com)
-# com<-subset(com, select = -x)
-# head(com)
-# com<-as.matrix(com)
-# com<-as.factor(com)
-###################################################################
 
-pdf('Harmonized AKI-CIS-IRL-CTRL_TransClusters.pdf', height=5, width=5)
-par(mfrow=c(1,1), mar=rep(2,4))
-plotEmbedding(emb.harmony, groups=com, 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              #main='Harmonized CIS+irl+ctrl dataset',
-              verbose=FALSE,legend.x='topleft', 
-              mark.clusters = TRUE, mark.cluster.cex = 1,
-              shuffle.colors = FALSE, cex=0.3, alpha=1)
-dev.off()
-
-plotEmbedding(emb.harmony, groups=meta, 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='Harmonized AKI-CIS-irl-ctrl dataset',
-              verbose=FALSE,legend.x='topleft', 
-              #mark.clusters = TRUE, mark.cluster.cex = 1,
-              #shuffle.colors = TRUE, cex=0.1
-              )
-
-n<-0.7
-#Visualizing the clusters in a spatial context
-pdf('CIS_Whole_All_timepoints.pdf',height=3, width=15)
-par(mfrow=c(1,4), mar=rep(2,4))
-plotEmbedding(CIS_0h$pos, groups=com[rownames(CIS_0h$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='CIS 0h', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(CIS_12h$pos, groups=com[rownames(CIS_12h$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='CIS 12h', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(CIS_24h$pos, groups=com[rownames(CIS_24h$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='CIS 24h', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(CIS_48h$pos, groups=com[rownames(CIS_48h$pos)], 
-              show.legend=TRUE, xlab=NA, ylab=NA, 
-              main='CIS 48h', cex=n, alpha=1,
-              verbose=FALSE)
-dev.off()
-
-#Visualizing the clusters in a spatial context (irl)
-pdf('IRL_Whole_All_timepoints.pdf',height=3, width=15)
-par(mfrow=c(1,4), mar=rep(2,4))
-plotEmbedding(irl1$pos, groups=com[rownames(irl1$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='irl1', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(irl2$pos, groups=com[rownames(irl2$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='irl2', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(irl3$pos, groups=com[rownames(irl3$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='irl3', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(irl4$pos, groups=com[rownames(irl4$pos)], 
-              show.legend=TRUE, xlab=NA, ylab=NA, 
-              main='irl4', cex=n, alpha=1,
-              verbose=FALSE)
-dev.off()
-
-#Visualizing the clusters in a spatial context (ctrl)
-pdf('CTRL_Whole_All_timepoints.pdf',height=3, width=15)
-par(mfrow=c(1,4), mar=rep(2,4))
-plotEmbedding(ctrl1$pos, groups=com[rownames(ctrl1$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='ctrl1', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(ctrl2$pos, groups=com[rownames(ctrl2$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='ctrl2', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(ctrl3$pos, groups=com[rownames(ctrl3$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='ctrl3', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(ctrl4$pos, groups=com[rownames(ctrl4$pos)], 
-              show.legend=TRUE, xlab=NA, ylab=NA, 
-              main='ctrl4', cex=n, alpha=1,
-              verbose=FALSE)
-dev.off()
-
-#Visualizing the clusters in a spatial context (AKI)
-pdf('AKI_Whole_All_timepoints.pdf',height=3, width=15)
-par(mfrow=c(1,5), mar=rep(2,4))
-plotEmbedding(AKI_sham$pos, groups=com[rownames(AKI_sham$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='AKI sham', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(AKI_4h$pos, groups=com[rownames(AKI_4h$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='AKI 4h', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(AKI_12h$pos, groups=com[rownames(AKI_12h$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='AKI 12h', cex=n, alpha=1,
-             verbose=FALSE)
-
-plotEmbedding(AKI_2d$pos, groups=com[rownames(AKI_2d$pos)], 
-              show.legend=FALSE, xlab=NA, ylab=NA, 
-              main='AKI 2days', cex=n, alpha=1,
-              verbose=FALSE)
-
-plotEmbedding(AKI_6w$pos, groups=com[rownames(AKI_6w$pos)], 
-              show.legend=TRUE, xlab=NA, ylab=NA, 
-              main='AKI 6 weeks', cex=n, alpha=1,
-              verbose=FALSE)
-dev.off()
-
-
+##############SEGMENTATION AND VISUALIZATION ###################################
 #Segmenting out the medulla region from all the timepoints
 medulla<-com[com==1]
 saveRDS(medulla, file = "AKI-CIS-irl-ctrl_Medulla_spots.rds")
@@ -619,7 +487,6 @@ dev.off()
 
 
 #Segmenting out the cortex
-#cortex<-com[com!=10 & com!=6 & com!=1 & com!=8 & com!=9]
 cortex<-com[com==2|com==3|com==4|com==6| com==10]
 saveRDS(cortex, file = "AKI-CIS-irl-ctrl_Cortex_spots.rds")
 
