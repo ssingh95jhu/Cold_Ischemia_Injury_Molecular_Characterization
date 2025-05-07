@@ -1,9 +1,6 @@
-### Contents of folder Figure1
+### Contents of folder Figure2
 
-This folder contains the codes to generate images used in sections B-E of
-Figure1 of the main article section.
+This folder contains the codes Fig2_E and Fig2_F-G-H to generate images used in 
+sections E and F-H of Figure2 of the main article section.
 
-Note: Images M and N of the Supplementary Figure1 can be generated using
-the same codes as Figure1E (as demonstrated here).
 
-The data necessary to run the codes can be found at zenodo ID: xxxx
