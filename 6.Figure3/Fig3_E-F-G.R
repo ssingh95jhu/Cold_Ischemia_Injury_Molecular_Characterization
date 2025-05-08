@@ -30,6 +30,7 @@ dev.off()
 ########### CIS INTERFACE (OXPHOS, Thermogenesis, TCA Cycle)
 #Extracting gene set enrichment analysis results (refer to the code 
 #Linear_Regression_CIS_AKI.R stored in the the folder 2.Linear_Regression_Modeling)
+#Note: INTERFACE is same as Outer Medulla (as described in the main article section)
 CIS_Interface.KEGG<-readRDS("EnrichmentPlots/CIS_Interface.KEGG_GSEA.rds")
 
 pathway1<-"Oxidative phosphorylation"
@@ -48,6 +49,7 @@ dev.off()
 ########### CIS MEDULLA (OXPHOS, Thermogenesis, TCA Cycle)
 #Extracting gene set enrichment analysis results (refer to the code 
 #Linear_Regression_CIS_AKI.R stored in the the folder 2.Linear_Regression_Modeling)
+#Note: MEDULLA is same as Inner Medulla (as described in the main article section)
 CIS_Medulla.KEGG<-readRDS("EnrichmentPlots/CIS_Medulla.KEGG_GSEA.rds")
 
 pathway1<-"Oxidative phosphorylation"
