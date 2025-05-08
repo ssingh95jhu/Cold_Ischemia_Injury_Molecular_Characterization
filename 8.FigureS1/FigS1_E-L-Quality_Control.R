@@ -7,21 +7,12 @@ setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHop
 ########################## ADDING LIBRARY ######################################
 library(openxlsx)
 library(ggplot2)
-library(pheatmap)
 
-# load data
+# load coled ischemia kidney data
 load("data/CIS_data.RData")
-load("data/AKI_data.RData")
-load("data/Rabb_ctrl.RData")
-load("data/Rabb_irl24h.RData")
-
-
-hist(log10(colSums(as.matrix(CIS_0h$gexp))+1))
-hist(log10(colSums(as.matrix(CIS_12h$gexp))+1))
-hist(log10(colSums(as.matrix(CIS_24h$gexp))+1))
-hist(log10(colSums(as.matrix(CIS_48h$gexp))+1))
 
 ## Cold Ischemia Dataset Quality Control #######################################
+#cutsom theme
 my_theme<-theme_minimal() + 
   theme(
         axis.text.x = element_text(size = 12, color = "black"),   # Adjust x-axis label size & color
@@ -34,8 +25,8 @@ my_theme<-theme_minimal() +
         panel.border = element_rect(color = "black", fill = NA, size = 1)  # Add a border
   )
 
-
-#df1<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_0h$gexp)+1)))
+########## CIS Transcripts per Spot  QC ########################################
+#CIS 0 hours
 df1<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_0h$gexp)) +1))
 g1<-ggplot(df1, aes(x = Genes_per_Spot)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -44,7 +35,7 @@ g1<-ggplot(df1, aes(x = Genes_per_Spot)) +
   scale_y_continuous(breaks = seq(0, 400, by = 100), limits = c(0, 400)) + 
   my_theme
 
-#df2<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_12h$gexp)+1)))
+#CIS 12 hours
 df2<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_12h$gexp)) +1))
 g2<-ggplot(df2, aes(x = Genes_per_Spot)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -53,7 +44,7 @@ g2<-ggplot(df2, aes(x = Genes_per_Spot)) +
   scale_y_continuous(breaks = seq(0, 400, by = 100), limits = c(0, 400)) + 
   my_theme
 
-#df3<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_24h$gexp)+1)))
+#CIS 24 hours
 df3<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_24h$gexp)) +1))
 g3<-ggplot(df3, aes(x = Genes_per_Spot)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -62,7 +53,7 @@ g3<-ggplot(df3, aes(x = Genes_per_Spot)) +
   scale_y_continuous(breaks = seq(0, 400, by = 100), limits = c(0, 400)) + 
   my_theme
 
-#df4<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_48h$gexp)+1)))
+#CIS 48 hours
 df4<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_48h$gexp)) +1))
 g4<-ggplot(df4, aes(x = Genes_per_Spot)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -81,7 +72,7 @@ dev.off()
 
 
 ########## CIS Spots per Gene QC ###############################################
-#df1<-data.frame(Genes_per_Spot=log10(colSums(as.matrix(CIS_0h$gexp)+1)))
+#CIS 0 hours
 df5<-data.frame(Spots_per_Gene=log10(rowSums(as.matrix(CIS_0h$gexp)) +1))
 g5<-ggplot(df5, aes(x = Spots_per_Gene)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -90,6 +81,7 @@ g5<-ggplot(df5, aes(x = Spots_per_Gene)) +
   scale_y_continuous(breaks = seq(0, 800, by = 200), limits = c(0, 800)) + 
   my_theme
 
+#CIS 12 hours
 df6<-data.frame(Spots_per_Gene=log10(rowSums(as.matrix(CIS_12h$gexp)) +1))
 g6<-ggplot(df6, aes(x = Spots_per_Gene)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -98,6 +90,7 @@ g6<-ggplot(df6, aes(x = Spots_per_Gene)) +
   scale_y_continuous(breaks = seq(0, 800, by = 200), limits = c(0, 800)) + 
   my_theme
 
+#CIS 24 hours
 df7<-data.frame(Spots_per_Gene=log10(rowSums(as.matrix(CIS_24h$gexp)) +1))
 g7<-ggplot(df7, aes(x = Spots_per_Gene)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -106,6 +99,7 @@ g7<-ggplot(df7, aes(x = Spots_per_Gene)) +
   scale_y_continuous(breaks = seq(0, 800, by = 200), limits = c(0, 800)) + 
   my_theme
 
+#CIS 48 hours
 df8<-data.frame(Spots_per_Gene=log10(rowSums(as.matrix(CIS_48h$gexp)) +1))
 g8<-ggplot(df8, aes(x = Spots_per_Gene)) +
   geom_histogram(binwidth = 0.05, fill = "gray", color = "black") +  # Adjust bin width as needed
@@ -119,11 +113,3 @@ pdf("Figures/Figure1S/pdfs/CIS_QC_Spots_per_Gene.pdf", height=10, width=7.5)
 grid.arrange(g5,g6,g7,g8, ncol=1)
 dev.off()
 
-
-
-
-# 
-# hist(log10(colSums(as.matrix(CIS_0h$gexp))+1))
-# hist(log10(colSums(as.matrix(CIS_12h$gexp))+1))
-# hist(log10(colSums(as.matrix(CIS_24h$gexp))+1))
-# hist(log10(colSums(as.matrix(CIS_48h$gexp))+1))
