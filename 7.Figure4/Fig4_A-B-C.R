@@ -4,11 +4,6 @@ gc()
 
 setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHopkins/Jean Fan - 2024_spatial_AKI/Manuscript")
 
-## load data
-load("data/CIS_data.RData")
-load("data/AKI_data.RData")
-#load("data/Rabb_ctrl.RData")
-
 ########################## ADDING LIBRARY ######################################
 library(openxlsx)
 library(ggplot2)
@@ -17,7 +12,7 @@ library(dplyr)
 
 ################################################################################
 #### Extracting data from the stored tables:
-## DEGS DETECTED IN DIFFERENT COMPARTMENTS OF THE KIDNEY
+## DEGS DETECTED IN DIFFERENT COMPARTMENTS OF THE KIDNEY (CIS & AKI DATASETS)
 cis_cortex_degs <- read.xlsx("Supplementary_Tables/Limma_cpmCIS_DEGs.xlsx", sheet = "CIS_Cortex")
 rownames(cis_cortex_degs)<-cis_cortex_degs$Genes
 head(cis_cortex_degs)
@@ -44,7 +39,6 @@ head(aki_medulla_degs)
 
 ##x*****************************************************************************
 wb1<-createWorkbook()
-
 
 ## 1.CIS CORTEX vs AKI CORTEX ****************************************************
 comm_genes<-intersect(rownames(cis_cortex_degs), rownames(aki_cortex_degs) )
