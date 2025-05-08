@@ -4,25 +4,14 @@ gc()
 
 setwd("/Users/srujansingh/Library/CloudStorage/OneDrive-SharedLibraries-JohnsHopkins/Jean Fan - 2024_spatial_AKI/Manuscript")
 
-## load data
-load("data/CIS_data.RData")
-load("data/AKI_data.RData")
-load("data/Rabb_ctrl.RData")
-
 ########################## ADDING LIBRARY ######################################
 library(openxlsx)
-library(clusterProfiler)
-library(AnnotationDbi)
-library(org.Mm.eg.db)
-library(ggplot2)
-library(msigdbr) #For HALLMARK Pathway 
 library(enrichplot) #For ClusterProfiler()
-library(pathview)
-library(biomaRt)
-library(cowplot)
 
 ############ KEGG GSEA PATHWAYS PLOTTING #######################################
 ########### CIS CORTEX (OXPHOS, Thermogenesis, TCA Cycle) ######################
+#Extracting gene set enrichment analysis results (refer to the code 
+#Linear_Regression_CIS_AKI.R stored in the the folder 2.Linear_Regression_Modeling)
 CIS_Cortex.KEGG<-readRDS("EnrichmentPlots/CIS_Cortex.KEGG_GSEA.rds")
 
 pathway1<-"Oxidative phosphorylation"
@@ -39,6 +28,8 @@ gseaplot2(CIS_Cortex.KEGG, geneSetID = c(ID1,ID2,ID3),  subplots=1:2, color= c("
 dev.off()
 
 ########### CIS INTERFACE (OXPHOS, Thermogenesis, TCA Cycle)
+#Extracting gene set enrichment analysis results (refer to the code 
+#Linear_Regression_CIS_AKI.R stored in the the folder 2.Linear_Regression_Modeling)
 CIS_Interface.KEGG<-readRDS("EnrichmentPlots/CIS_Interface.KEGG_GSEA.rds")
 
 pathway1<-"Oxidative phosphorylation"
@@ -55,6 +46,8 @@ gseaplot2(CIS_Interface.KEGG, geneSetID = c(ID1,ID2,ID3),  subplots=1:2, color= 
 dev.off()
 
 ########### CIS MEDULLA (OXPHOS, Thermogenesis, TCA Cycle)
+#Extracting gene set enrichment analysis results (refer to the code 
+#Linear_Regression_CIS_AKI.R stored in the the folder 2.Linear_Regression_Modeling)
 CIS_Medulla.KEGG<-readRDS("EnrichmentPlots/CIS_Medulla.KEGG_GSEA.rds")
 
 pathway1<-"Oxidative phosphorylation"
