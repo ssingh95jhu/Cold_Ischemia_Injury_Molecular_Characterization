@@ -9,7 +9,9 @@ library(openxlsx)
 library(ggplot2)
 library(pheatmap)
 
-# load data
+# loading all the 17 spatial transcriptomics datasets belonging to the different
+#experimental groups.
+#Note: irl is same as AKI24 group as described in the main experimenatl section.
 load("data/CIS_data.RData")
 load("data/AKI_data.RData")
 load("data/Rabb_ctrl.RData")
@@ -44,19 +46,11 @@ interface_genes<-data.frame(Genes=df1$Genes, L2FC=df1$log2FoldChange, pval=df1$p
 df1<-read.xlsx("Supplementary_Tables/Fig1_TopMarkers_Kidney_Compartments.xlsx", sheet="Medulla")
 medulla_genes<-data.frame(Genes=df1$Genes, L2FC=df1$log2FoldChange, pval=df1$pvalue)
 
-# table(c(cortex_genes$Genes, interface_genes$Genes, medulla_genes$Genes))
-# unique_genes<-names(which((table(c(cortex_genes$Genes, interface_genes$Genes, medulla_genes$Genes)))==1))
-# 
-# cortex_markers<-intersect(unique_genes, cortex_genes$Genes)
-# interface_markers<-intersect(unique_genes, interface_genes$Genes)
-# medulla_markers<-intersect(unique_genes, medulla_genes$Genes)
 
-#intersect(cortex_genes$Gens, medulla_genes$Genes)
 ## Spots #######################################################################
 cortex <- readRDS('AKI-CIS-irl-ctrl_Cortex_spots.rds')
 interface <- readRDS('AKI-CIS-irl-ctrl_Interface_spots.rds')
 medulla <- readRDS('AKI-CIS-irl-ctrl_Medulla_spots.rds')
-
 
 ##### CIS DATASETS HEATMAPS ####################################################
 #1.All_Cortex_Spots
@@ -98,11 +92,6 @@ CIS_12h.medulla.cd<-CIS_12h$mat_notlog[,CIS_medulla.12h]
 CIS_24h.medulla.cd<-CIS_24h$mat_notlog[,CIS_medulla.24h]
 CIS_48h.medulla.cd<-CIS_48h$mat_notlog[,CIS_medulla.48h]
 
-# #HEATMAP FORMAT 1:
-# CIS.cd<-cbind(CIS_0h.cortex.cd, CIS_12h.cortex.cd, CIS_24h.cortex.cd, CIS_48h.cortex.cd,
-#               CIS_0h.interface.cd, CIS_12h.interface.cd, CIS_24h.interface.cd, CIS_48h.interface.cd,
-#               CIS_0h.medulla.cd, CIS_12h.medulla.cd, CIS_24h.medulla.cd, CIS_48h.medulla.cd)
-
 #HEATMAP CIS (TOP CORTEX GENES)
 CIS.cd<-cbind(CIS_0h.cortex.cd, CIS_0h.interface.cd, CIS_0h.medulla.cd, 
               CIS_12h.cortex.cd, CIS_12h.interface.cd, CIS_12h.medulla.cd, 
@@ -111,7 +100,6 @@ CIS.cd<-cbind(CIS_0h.cortex.cd, CIS_0h.interface.cd, CIS_0h.medulla.cd,
 
 
 CIS.cortex.cd<-CIS.cd[cortex_genes$Genes[1:30],]
-#CIS.cortex.cd<-CIS.cd[cortex_markers[1:20],]
 
 sample_annotations <- data.frame(
   Timepoint = factor(c(rep("0h", ncol(CIS_0h.cortex.cd)), rep("0h", ncol(CIS_0h.interface.cd)),
@@ -142,9 +130,6 @@ overall_max <- quantile(scaled_mat, 0.95)
 custom_colors<-colorRampPalette(c("black", "blue", "purple", "yellow"))(100)
 breaks <- seq(overall_min, overall_max, length.out = 101)
 
-# pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames = FALSE, show_rownames = TRUE,
-#          color = custom_colors, breaks= breaks)
-
 # Define colors for annotations
 ann_colors <- list(
   Timepoint = c("0h" = "lavender", "12h" = "mediumpurple", "24h" = "pink", "48h" = "magenta"),
@@ -162,6 +147,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 ##Heatmap for CIS interface:
+#Note: interface is same as Outer Medulla as described in the main article section.
 CIS.interface.cd<-CIS.cd[interface_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -196,9 +182,6 @@ overall_max <- quantile(scaled_mat, 0.95)
 custom_colors<-colorRampPalette(c("black", "blue", "purple", "yellow"))(100)
 breaks <- seq(overall_min, overall_max, length.out = 101)
 
-# pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames = FALSE, show_rownames = TRUE,
-#          color = custom_colors, breaks= breaks)
-
 # Draw heatmap with annotations
 pdf("Figures/Figure1S/pdfs/CIS_Interface_Marker_Genes_Heatmap.pdf", height=6, width=8)
 pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames = FALSE, show_rownames = TRUE,
@@ -210,6 +193,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for Medulla (CIS)
+#Note: medulla is same as Inner Medulla as described in the main article section.
 CIS.medulla.cd<-CIS.cd[medulla_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -240,9 +224,6 @@ overall_max <- quantile(scaled_mat, 0.95)
 
 custom_colors<-colorRampPalette(c("black", "blue", "purple", "yellow"))(100)
 breaks <- seq(overall_min, overall_max, length.out = 101)
-
-# pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames = FALSE, show_rownames = TRUE,
-#          color = custom_colors, breaks= breaks)
 
 # Define colors for annotations
 ann_colors <- list(
@@ -305,7 +286,7 @@ AKI_4h.medulla.cd<-AKI_4h$mat_notlog[,AKI_medulla.4h]
 AKI_12h.medulla.cd<-AKI_12h$mat_notlog[,AKI_medulla.12h]
 AKI_2d.medulla.cd<-AKI_2d$mat_notlog[,AKI_medulla.2d]
 
-#HEATMAP FORMAT 2:
+#HEATMAP for AKI:
 AKI.cd<-cbind(AKI_sham.cortex.cd, AKI_sham.interface.cd, AKI_sham.medulla.cd, 
               AKI_4h.cortex.cd, AKI_4h.interface.cd, AKI_4h.medulla.cd,
               AKI_12h.cortex.cd, AKI_12h.interface.cd, AKI_12h.medulla.cd, 
@@ -360,6 +341,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for AKI (Top Interface Genes)
+#Note: interface is same as Outer Medulla as described in the main article section.
 AKI.interface.cd<-AKI.cd[interface_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -408,6 +390,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for AKI (Top medulla genes)
+#Note: medulla is same as Inner Medulla as described in the main article section.
 AKI.medulla.cd<-AKI.cd[medulla_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -439,8 +422,6 @@ overall_max <- quantile(scaled_mat, 0.95)
 custom_colors<-colorRampPalette(c("black", "blue", "purple", "yellow"))(100)
 breaks <- seq(overall_min, overall_max, length.out = 101)
 
-# pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames = FALSE, show_rownames = TRUE,
-#          color = custom_colors, breaks= breaks)
 
 # Define colors for annotations
 ann_colors <- list(
@@ -500,7 +481,7 @@ ctrl2.medulla.cd<-ctrl2$mat_notlog[,ctrl2.medulla]
 ctrl3.medulla.cd<-ctrl3$mat_notlog[,ctrl3.medulla]
 ctrl4.medulla.cd<-ctrl4$mat_notlog[,ctrl4.medulla]
 
-#HEATMAP FORMAT 2:
+#HEATMAP for CTRL:
 CTRL.cd<-cbind(ctrl1.cortex.cd, ctrl1.interface.cd, ctrl1.medulla.cd, 
               ctrl2.cortex.cd, ctrl2.interface.cd, ctrl2.medulla.cd,
               ctrl3.cortex.cd, ctrl3.interface.cd, ctrl3.medulla.cd, 
@@ -555,6 +536,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #HEATMAP (TOP INTERFACE GENES)
+#Note: interface is same as Outer Medulla as described in the main article section.
 CTRL.interface.cd<-CTRL.cd[interface_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -603,6 +585,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for CTRL (Top medulla genes)
+#Note: medulla is same as Inner Medulla as described in the main article section.
 CTRL.medulla.cd<-CTRL.cd[medulla_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -748,6 +731,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for IRL (Top Interface Markers)
+#Note: interface is same as Outer Medulla as described in the main article section.
 IRL.interface.cd<-IRL.cd[interface_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
@@ -797,6 +781,7 @@ pheatmap(scaled_mat, cluster_rows = FALSE, cluster_cols = FALSE, show_colnames =
 dev.off()
 
 #Heatmap for IRL (Top Medulla Genes)
+#Note: medulla is same as Inner Medulla as described in the main article section.
 IRL.medulla.cd<-IRL.cd[medulla_genes$Genes[1:30],]
 
 sample_annotations <- data.frame(
