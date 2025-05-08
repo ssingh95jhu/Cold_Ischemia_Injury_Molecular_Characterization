@@ -1,6 +1,7 @@
-This folder contains the code FigS1_E-L_Quality_Control.R demonstrating how to perform 
-quality control (QC) analysis on the cold ischemia injury (CIS) spatial transcriptomics 
-datasets.
+This folder contains the code FigS2_A-L_TopMarkers_Heatmaps.R demonstrating how to plot
+heatmaps (Supplemenatry Figure S@) of the top marker genes of the different compartments 
+(i.e.,inner medulla, outer medulla, cortex) belonging to the different experimental groups 
+(i.e.,CIS, AKI, CTRL and AKI24).
 
 
 
